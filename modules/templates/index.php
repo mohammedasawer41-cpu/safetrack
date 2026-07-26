@@ -5,7 +5,7 @@ include '../../includes/navbar.php';
 include '../../includes/sidebar.php';
 
 $stmt = $pdo->query("
-    SELECT id, template_name, description, created_at, 
+    SELECT ct.id, ct.template_name, ct.description, ct.created_at, 
            COUNT(cq.id) as question_count
     FROM checklist_templates ct
     LEFT JOIN checklist_questions cq ON cq.template_id = ct.id
