@@ -1,5 +1,5 @@
 <footer class="main-footer">
-<strong>SafeTrack HSE</strong>
+<strong>SafeTrack HSE V3</strong>
 </footer>
 </div>
 <script src="assets/adminlte/plugins/jquery/jquery.min.js"></script>
