@@ -1,5 +1,6 @@
 <?php
 require_once 'config/database.php';
+require_once 'config/auth.php';
 include 'includes/header.php';
 include 'includes/dashboard_data.php';
 include 'includes/chart_data.php';
