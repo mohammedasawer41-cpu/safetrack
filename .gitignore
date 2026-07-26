@@ -1,0 +1,27 @@
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Dependencies
+/vendor/
+node_modules/
+
+# Logs
+*.log
+
+# Compiled files
+*.class
+*.o
+
+# OS files
+Thumbs.db
+.DS_Store
