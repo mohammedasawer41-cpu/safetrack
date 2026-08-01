@@ -103,7 +103,7 @@ $color_map = ['Planned'=>'info','Assigned'=>'primary','In Progress'=>'warning','
 <?php if($row['anomaly_count'] > 0): ?>
 <span class="badge bg-danger"><?= $row['anomaly_count'] ?> anomalies</span>
 <?php else: ?>
-<span class="badge bg-success">OK</span>
+<span class="badge bg-success">No anomalies</span>
 <?php endif; ?>
 </td>
 <td>

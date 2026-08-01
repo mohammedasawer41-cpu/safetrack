@@ -1,58 +1,91 @@
 <?php
 require_once '../../config/database.php';
+require_once '../../config/auth.php';
 include '../../includes/header.php';
 include '../../includes/navbar.php';
 include '../../includes/sidebar.php';
 
-$inspections = $pdo->query("SELECT id, inspection_no FROM inspections ORDER BY inspection_no DESC");
+$message = '';
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $title = trim($_POST['title'] ?? '');
+    $description = trim($_POST['description'] ?? '');
+    $severity = trim($_POST['severity'] ?? '');
+    $reported_date = trim($_POST['reported_date'] ?? date('Y-m-d'));
+    
+    if (empty($title)) {
+        $error = 'Title is required.';
+    } elseif (empty($severity)) {
+        $error = 'Severity is required.';
+    } else {
+        try {
+            $stmt = $pdo->prepare(
+                "INSERT INTO anomalies (title, description, severity, status, reported_by, reported_date, created_at) 
+                 VALUES (?, ?, ?, ?, ?, ?, NOW())"
+            );
+            $stmt->execute([
+                $title,
+                $description,
+                $severity,
+                'Open',
+                $_SESSION['user_id'],
+                $reported_date
+            ]);
+            $anomaly_id = $pdo->lastInsertId();
+            header("Location: view.php?id=$anomaly_id&created=1");
+            exit;
+        } catch (Exception $e) {
+            $error = 'Error creating anomaly: ' . $e->getMessage();
+        }
+    }
+}
 ?>
 
 <div class="content-wrapper">
 <section class="content-header">
 <div class="container-fluid">
 <div class="row mb-2">
-<div class="col-sm-6"><h1>New Anomaly</h1></div>
+<div class="col-sm-6"><h1>Create Anomaly</h1></div>
 <div class="col-sm-6 text-end"><a href="index.php" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back</a></div>
 </div>
 </div>
 </section>
 <section class="content">
 <div class="container-fluid">
-<div class="card">
-<div class="card-header"><h3 class="card-title">Create New Anomaly</h3></div>
-<form method="POST" action="store.php">
+
+<?php if ($error): ?>
+<div class="alert alert-danger alert-dismissible fade show">
+<i class="fas fa-exclamation-circle"></i> <?= htmlspecialchars($error) ?>
+<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+<?php endif; ?>
+
+<div class="card card-primary">
+<div class="card-header"><h3 class="card-title">Anomaly Information</h3></div>
+<form method="POST">
 <div class="card-body">
-<div class="row">
-<div class="col-md-6">
 <div class="form-group mb-3">
-<label>Inspection</label>
-<select name="inspection_id" class="form-control">
-<option value="">Select Inspection</option>
-<?php while($row = $inspections->fetch(PDO::FETCH_ASSOC)): ?>
-<option value="<?= $row['id'] ?>"><?= htmlspecialchars($row['inspection_no']) ?></option>
-<?php endwhile; ?>
-</select>
+<label>Title *</label>
+<input type="text" name="title" class="form-control" placeholder="Brief anomaly description" required>
 </div>
-</div>
-<div class="col-md-6">
 <div class="form-group mb-3">
-<label>Severity</label>
+<label>Description</label>
+<textarea name="description" rows="4" class="form-control" placeholder="Detailed description of the anomaly"></textarea>
+</div>
+<div class="form-group mb-3">
+<label>Severity *</label>
 <select name="severity" class="form-control" required>
+<option value="">-- Select Severity --</option>
 <option value="Low">Low</option>
-<option value="Medium" selected>Medium</option>
+<option value="Medium">Medium</option>
 <option value="High">High</option>
 <option value="Critical">Critical</option>
 </select>
 </div>
-</div>
-</div>
 <div class="form-group mb-3">
-<label>Title</label>
-<input type="text" name="title" class="form-control" required>
-</div>
-<div class="form-group mb-3">
-<label>Description</label>
-<textarea name="description" rows="4" class="form-control"></textarea>
+<label>Reported Date</label>
+<input type="date" name="reported_date" value="<?= date('Y-m-d') ?>" class="form-control">
 </div>
 </div>
 <div class="card-footer">
@@ -61,6 +94,7 @@ $inspections = $pdo->query("SELECT id, inspection_no FROM inspections ORDER BY i
 </div>
 </form>
 </div>
+
 </div>
 </section>
 </div>

@@ -32,6 +32,12 @@ SafeTrack HSE
 </a>
 </li>
 <li class="nav-item">
+<a href="<?= $basePath ?>modules/templates/index.php" class="nav-link">
+<i class="nav-icon fas fa-list-check"></i>
+<p>Checklist Templates</p>
+</a>
+</li>
+<li class="nav-item">
 <a href="<?= $basePath ?>modules/anomalies/index.php" class="nav-link">
 <i class="nav-icon fas fa-exclamation-triangle"></i>
 <p>Anomalies</p>
